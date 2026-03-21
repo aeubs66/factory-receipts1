@@ -103,7 +103,7 @@ export default function AdminDashboard() {
           </div>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-            {receipts.map(r => (
+            {receipts.filter(r => r.status !== 'approved').map(r => (
               <ReceiptCard key={r.id} receipt={r} onView={setSelected} />
             ))}
           </div>

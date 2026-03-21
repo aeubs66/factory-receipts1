@@ -161,7 +161,7 @@ export default function ManagerDashboard() {
 
       {/* All receipts */}
       <div className="pb-8">
-        <h2 className="text-lg font-semibold text-white font-sans mb-4">{t('manager.dashboard.allReceipts')}</h2>
+        <h2 className="text-lg font-semibold text-white font-sans mb-4">Pending & Rejected Receipts</h2>
         {loading ? (
           <div className="flex items-center justify-center py-20">
             <div className="w-6 h-6 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
@@ -173,7 +173,7 @@ export default function ManagerDashboard() {
           </div>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-            {receipts.map(r => (
+            {receipts.filter(r => r.status !== 'approved').map(r => (
               <ReceiptCard
                 key={r.id}
                 receipt={r}

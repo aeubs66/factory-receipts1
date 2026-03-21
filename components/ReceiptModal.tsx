@@ -31,6 +31,19 @@ export default function ReceiptModal({ receipt, isManager, onClose, onUpdate }: 
     setLoading(false)
   }
 
+  const handleDelete = async () => {
+    if (!confirm('Are you sure you want to permanently delete this receipt? This action cannot be undone.')) return
+    setLoading(true)
+    const { error } = await supabase.from('receipts').delete().eq('id', receipt.id)
+    if (!error) {
+      onUpdate()
+      onClose()
+    } else {
+      alert(`Could not delete receipt: ${error.message}`)
+    }
+    setLoading(false)
+  }
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose}>
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
@@ -44,11 +57,23 @@ export default function ReceiptModal({ receipt, isManager, onClose, onUpdate }: 
             <h2 className="text-white font-bold text-lg font-sans">{t('modal.title')}</h2>
             <p className="text-gray-500 text-xs font-mono">#{receipt.id.slice(0, 16)}</p>
           </div>
-          <button onClick={onClose} className="text-gray-500 hover:text-white transition-colors">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={handleDelete} 
+              disabled={loading}
+              className="text-red-500 hover:text-red-400 transition-colors disabled:opacity-50"
+              title="Delete Receipt"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+            </button>
+            <button onClick={onClose} disabled={loading} className="text-gray-500 hover:text-white transition-colors disabled:opacity-50">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
         </div>
 
         {/* Content */}
