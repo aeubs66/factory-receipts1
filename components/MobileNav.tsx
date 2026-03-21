@@ -99,10 +99,10 @@ export default function MobileNav({ role }: { role: 'admin' | 'manager' }) {
     return link
   })
 
-  // Also include Account setting link on mobile!
-  const accountLink = {
-    href: role === 'admin' ? '/admin/account' : '/manager/account',
-    label: t('sidebar.account'),
+  // Also include Settings link on mobile!
+  const settingsLink = {
+    href: role === 'admin' ? '/admin/settings' : '/manager/settings',
+    label: t('sidebar.settings'),
     icon: (
       <svg className="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
@@ -112,11 +112,11 @@ export default function MobileNav({ role }: { role: 'admin' | 'manager' }) {
   }
 
   // we only show max 5 items in bottom nav usually. 
-  // Let's replace workers with account on mobile, or just display up to 5 items tightly.
+  // Let's replace workers with settings on mobile
   // Actually, let's keep all 5 or 6 items if possible, but 5 is standard for bottom nav.
   const displayLinks = role === 'admin' 
-    ? [...translatedLinks.slice(0, 4), accountLink] // Skip workers on mobile nav explicitly for space, let them access account
-    : [...translatedLinks, accountLink] // 4 items for manager
+    ? [...translatedLinks.slice(0, 4), settingsLink] // Skip workers on mobile nav explicitly for space, let them access settings
+    : [...translatedLinks, settingsLink] // 4 items for manager
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-gray-900 border-t border-gray-800 z-50 pb-[env(safe-area-inset-bottom)] md:hidden">
