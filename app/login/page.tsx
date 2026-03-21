@@ -6,7 +6,7 @@ import { supabase } from '@/lib/supabase'
 
 export default function LoginPage() {
   const router = useRouter()
-  const [email, setEmail] = useState('')
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -17,7 +17,7 @@ export default function LoginPage() {
     setError('')
 
     const { data, error: authError } = await supabase.auth.signInWithPassword({
-      email,
+      email: `${username}@factory.local`,
       password,
     })
 
@@ -81,14 +81,14 @@ export default function LoginPage() {
           <form onSubmit={handleLogin} className="space-y-5">
             <div>
               <label className="text-gray-400 text-xs font-mono uppercase tracking-wider mb-2 block">
-                Email Address
+                Username
               </label>
               <input
-                type="email"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
+                type="text"
+                value={username}
+                onChange={e => setUsername(e.target.value)}
                 className="factory-input"
-                placeholder="you@factory.com"
+                placeholder="username"
                 required
               />
             </div>
@@ -123,7 +123,8 @@ export default function LoginPage() {
 
           <div className="mt-6 pt-6 border-t border-gray-800">
             <p className="text-gray-600 text-xs font-mono text-center">
-              Contact your system administrator to get access
+              Contact your system administrator to get access.<br/>
+              <span className="opacity-50 mt-2 block">(Admins: Create users with email format username@factory.local)</span>
             </p>
           </div>
         </div>

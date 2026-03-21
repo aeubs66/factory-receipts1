@@ -8,14 +8,16 @@ const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey)
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, password, full_name, role } = await req.json()
+    const { username, password, full_name, role } = await req.json()
 
-    if (!email || !password || !role) {
+    if (!username || !password || !role) {
       return NextResponse.json(
-        { error: 'Email, password, and role are required' },
+        { error: 'Username, password, and role are required' },
         { status: 400 }
       )
     }
+
+    const email = `${username}@factory.local`
 
     if (!['admin', 'manager'].includes(role)) {
       return NextResponse.json(
@@ -39,7 +41,7 @@ export async function POST(req: NextRequest) {
 
     const { error: profileError } = await supabaseAdmin.from('profiles').insert({
       id: data.user.id,
-      full_name: full_name || email,
+      full_name: full_name || username,
       role,
     })
 

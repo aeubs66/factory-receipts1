@@ -3,7 +3,7 @@
 import { useState } from 'react'
 
 export default function AdminUsersPage() {
-  const [email, setEmail] = useState('')
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [fullName, setFullName] = useState('')
   const [role, setRole] = useState<'admin' | 'manager'>('admin')
@@ -22,7 +22,7 @@ export default function AdminUsersPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          email,
+          username,
           password,
           full_name: fullName,
           role,
@@ -35,7 +35,7 @@ export default function AdminUsersPage() {
       }
 
       setSuccess('User account created successfully')
-      setEmail('')
+      setUsername('')
       setPassword('')
       setFullName('')
       setRole('admin')
@@ -83,14 +83,14 @@ export default function AdminUsersPage() {
 
         <div>
           <label className="text-gray-400 text-xs font-mono uppercase tracking-wider mb-2 block">
-            Email *
+            Username *
           </label>
           <input
-            type="email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
+            type="text"
+            value={username}
+            onChange={e => setUsername(e.target.value)}
             className="factory-input"
-            placeholder="user@example.com"
+            placeholder="worker_name"
             required
           />
         </div>

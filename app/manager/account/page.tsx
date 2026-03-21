@@ -8,7 +8,7 @@ export default async function ManagerAccountPage() {
   const profile = session
     ? await supabase
         .from('profiles')
-        .select('full_name, role, email')
+        .select('full_name, role')
         .eq('id', session.user.id)
         .single()
     : null
@@ -30,9 +30,9 @@ export default async function ManagerAccountPage() {
           </div>
         </div>
         <div>
-          <div className="text-xs font-mono text-gray-500 uppercase mb-1">Email</div>
+          <div className="text-xs font-mono text-gray-500 uppercase mb-1">Username</div>
           <div className="text-sm font-mono text-white">
-            {data?.email ?? session?.user.email ?? 'Not available'}
+            {session?.user.email?.replace('@factory.local', '') ?? 'Not available'}
           </div>
         </div>
         <div>
