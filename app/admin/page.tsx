@@ -57,7 +57,7 @@ export default function AdminDashboard() {
     { label: t('admin.dashboard.totalReceipts'), value: stats.total, color: 'text-white' },
     { label: t('admin.dashboard.pending'), value: stats.pending, color: 'text-amber-400' },
     { label: t('admin.dashboard.approved'), value: stats.approved, color: 'text-emerald-400' },
-    { label: t('admin.dashboard.totalReimbursed'), value: `$${stats.totalAmount.toFixed(2)}`, color: 'text-orange-400' },
+    { label: t('admin.dashboard.totalReimbursed'), value: `${Math.round(stats.totalAmount).toLocaleString('en-IQ')} IQD`, color: 'text-orange-400' },
   ]
 
   return (

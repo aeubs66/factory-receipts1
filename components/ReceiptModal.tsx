@@ -70,7 +70,7 @@ export default function ReceiptModal({ receipt, isManager, onClose, onUpdate }: 
             {[
               { label: t('modal.workerName'), value: receipt.worker_name },
               { label: t('modal.workerId'), value: receipt.worker_id },
-              { label: t('modal.amount'), value: `$${Number(receipt.amount).toFixed(2)}` },
+              { label: t('modal.amount'), value: `${Math.round(Number(receipt.amount)).toLocaleString('en-IQ')} IQD` },
               { label: t('modal.purchaseDate'), value: new Date(receipt.purchase_date).toLocaleDateString() },
             ].map(({ label, value }) => (
               <div key={label} className="bg-gray-800/50 rounded-lg p-3">

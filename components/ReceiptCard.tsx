@@ -51,7 +51,7 @@ export default function ReceiptCard({
         </div>
         <div className="text-right">
           <div className="text-orange-400 font-bold text-lg font-mono">
-            ${Number(receipt.amount).toFixed(2)}
+            {Math.round(Number(receipt.amount)).toLocaleString('en-IQ')} IQD
           </div>
           <div className="text-gray-600 text-xs font-mono">
             {new Date(receipt.purchase_date).toLocaleDateString()}

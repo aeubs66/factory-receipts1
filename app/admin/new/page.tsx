@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
+import { useLanguage } from '@/components/LanguageProvider'
 
 interface Worker {
   id: string
@@ -17,6 +18,7 @@ export default function NewReceiptPage() {
   const [success, setSuccess] = useState(false)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [imageFile, setImageFile] = useState<File | null>(null)
+  const { t } = useLanguage()
 
   const [workers, setWorkers] = useState<Worker[]>([])
   const [selectedWorkerId, setSelectedWorkerId] = useState('')
@@ -123,10 +125,10 @@ export default function NewReceiptPage() {
     <div className="p-8 max-w-2xl">
       <div className="mb-8">
         <a href="/admin" className="text-gray-500 hover:text-white text-sm font-mono flex items-center gap-1 mb-4 transition-colors">
-          ← Back to Dashboard
+          {t('admin.new.back')}
         </a>
-        <h1 className="text-2xl font-bold text-white font-sans">Submit New Receipt</h1>
-        <p className="text-gray-500 text-sm font-mono mt-1">Fill in the purchase details and upload the receipt image</p>
+        <h1 className="text-2xl font-bold text-white font-sans">{t('admin.new.title')}</h1>
+        <p className="text-gray-500 text-sm font-mono mt-1">{t('admin.new.subtitle')}</p>
       </div>
 
       {success && (
@@ -148,12 +150,12 @@ export default function NewReceiptPage() {
         {/* Worker Info */}
         <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 space-y-4">
           <h2 className="text-white font-semibold font-sans text-sm uppercase tracking-wide text-gray-400">
-            Worker Information
+            {t('admin.new.workerInfo')}
           </h2>
           <div className="grid grid-cols-1 gap-4">
             <div>
               <label className="text-gray-400 text-xs font-mono uppercase tracking-wider mb-2 block">
-                Worker *
+                {t('admin.new.worker')}
               </label>
               <select
                 value={selectedWorkerId}
@@ -168,7 +170,7 @@ export default function NewReceiptPage() {
                 className="factory-input"
                 required
               >
-                <option value="">Select worker...</option>
+                <option value="">{t('admin.new.selectWorker')}</option>
                 {workers.map(w => (
                   <option key={w.id} value={w.id}>
                     {w.name}
@@ -185,11 +187,11 @@ export default function NewReceiptPage() {
         {/* Purchase Info */}
         <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 space-y-4">
           <h2 className="text-white font-semibold font-sans text-sm uppercase tracking-wide text-gray-400">
-            Purchase Details
+            {t('admin.new.purchaseDetails')}
           </h2>
           <div>
             <label className="text-gray-400 text-xs font-mono uppercase tracking-wider mb-2 block">
-              Item Description *
+              {t('admin.new.itemDesc')}
             </label>
             <input
               type="text"
@@ -203,7 +205,7 @@ export default function NewReceiptPage() {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="text-gray-400 text-xs font-mono uppercase tracking-wider mb-2 block">
-                Amount Paid ($) *
+                {t('admin.new.amount')}
               </label>
               <input
                 type="number"
@@ -218,7 +220,7 @@ export default function NewReceiptPage() {
             </div>
             <div>
               <label className="text-gray-400 text-xs font-mono uppercase tracking-wider mb-2 block">
-                Purchase Date *
+                {t('admin.new.date')}
               </label>
               <input
                 type="date"
@@ -234,7 +236,7 @@ export default function NewReceiptPage() {
         {/* Image Upload */}
         <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
           <h2 className="text-white font-semibold font-sans text-sm uppercase tracking-wide text-gray-400 mb-4">
-            Receipt Image
+            {t('admin.new.image')}
           </h2>
 
           {imagePreview ? (
@@ -260,7 +262,7 @@ export default function NewReceiptPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
               </div>
-              <p className="text-gray-400 text-sm font-mono">Drop image here or <span className="text-orange-400">click to browse</span></p>
+              <p className="text-gray-400 text-sm font-mono">{t('admin.new.drop')} <span className="text-orange-400">{t('admin.new.browse')}</span></p>
               <p className="text-gray-600 text-xs font-mono mt-1">PNG, JPG, WEBP up to 10MB</p>
             </div>
           )}
@@ -280,7 +282,7 @@ export default function NewReceiptPage() {
             onClick={() => router.back()}
             className="factory-btn-secondary"
           >
-            Cancel
+            {t('admin.new.cancel')}
           </button>
           <button
             type="submit"
@@ -290,9 +292,9 @@ export default function NewReceiptPage() {
             {loading ? (
               <>
                 <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
-                Submitting...
+                ...
               </>
-            ) : '📤 Submit Receipt to Manager'}
+            ) : t('admin.new.submit')}
           </button>
         </div>
       </form>

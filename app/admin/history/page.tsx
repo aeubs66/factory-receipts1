@@ -5,12 +5,14 @@ import { supabase } from '@/lib/supabase'
 import { Receipt, ReceiptStatus } from '@/types'
 import ReceiptCard from '@/components/ReceiptCard'
 import ReceiptModal from '@/components/ReceiptModal'
+import { useLanguage } from '@/components/LanguageProvider'
 
 export default function AdminHistoryPage() {
   const [receipts, setReceipts] = useState<Receipt[]>([])
   const [filter, setFilter] = useState<ReceiptStatus | 'all'>('all')
   const [loading, setLoading] = useState(true)
   const [selected, setSelected] = useState<Receipt | null>(null)
+  const { t } = useLanguage()
 
   const fetchReceipts = async () => {
     let query = supabase.from('receipts').select('*').order('created_at', { ascending: false })
@@ -40,17 +42,17 @@ export default function AdminHistoryPage() {
   }, [filter])
 
   const filters: { label: string; value: ReceiptStatus | 'all'; color: string }[] = [
-    { label: 'All', value: 'all', color: 'text-white' },
-    { label: 'Pending', value: 'pending', color: 'text-amber-400' },
-    { label: 'Approved', value: 'approved', color: 'text-emerald-400' },
-    { label: 'Rejected', value: 'rejected', color: 'text-red-400' },
+    { label: t('sidebar.allReceipts'), value: 'all', color: 'text-white' },
+    { label: t('receipt.status.pending'), value: 'pending', color: 'text-amber-400' },
+    { label: t('receipt.status.approved'), value: 'approved', color: 'text-emerald-400' },
+    { label: t('receipt.status.rejected'), value: 'rejected', color: 'text-red-400' },
   ]
 
   return (
     <div className="p-8">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-white font-sans">My Receipts</h1>
-        <p className="text-gray-500 text-sm font-mono mt-1">Track all your submitted receipts</p>
+        <h1 className="text-2xl font-bold text-white font-sans">{t('admin.history.title')}</h1>
+        <p className="text-gray-500 text-sm font-mono mt-1">{t('admin.history.subtitle')}</p>
       </div>
 
       {/* Filter tabs */}
@@ -77,7 +79,7 @@ export default function AdminHistoryPage() {
       ) : receipts.length === 0 ? (
         <div className="text-center py-20 text-gray-600 font-mono">
           <div className="text-4xl mb-3">📭</div>
-          No receipts found
+          {t('admin.history.noReceipts')}
         </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">

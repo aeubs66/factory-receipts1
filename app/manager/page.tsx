@@ -119,7 +119,7 @@ export default function ManagerDashboard() {
           { label: t('manager.dashboard.totalReceipts'), value: stats.total, color: 'text-white' },
           { label: t('manager.dashboard.awaitingReview'), value: stats.pending, color: 'text-amber-400', highlight: stats.pending > 0 },
           { label: t('manager.dashboard.approved'), value: stats.approved, color: 'text-emerald-400' },
-          { label: t('manager.dashboard.totalPaidOut'), value: `$${stats.totalPaid.toFixed(2)}`, color: 'text-orange-400' },
+          { label: t('manager.dashboard.totalPaidOut'), value: `${Math.round(stats.totalPaid).toLocaleString('en-IQ')} IQD`, color: 'text-orange-400' },
         ].map(stat => (
           <div
             key={stat.label}
