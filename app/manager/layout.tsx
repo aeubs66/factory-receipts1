@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import Sidebar from '@/components/Sidebar'
+import MobileNav from '@/components/MobileNav'
 
 export default function ManagerLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter()
@@ -45,9 +46,10 @@ export default function ManagerLayout({ children }: { children: React.ReactNode 
       <div className="hidden md:block">
         <Sidebar role="manager" userName={userName} />
       </div>
-      <main className="flex-1 overflow-auto p-4 sm:p-6 md:p-8">
+      <main className="flex-1 overflow-auto p-4 sm:p-6 md:p-8 pb-24 md:pb-8">
         {children}
       </main>
+      <MobileNav role="manager" />
     </div>
   )
 }
