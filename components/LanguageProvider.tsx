@@ -1,10 +1,7 @@
 'use client'
 
 import { createContext, useContext, useEffect, useState } from 'react'
-<<<<<<< HEAD
 import { supabase } from '@/lib/supabase'
-=======
->>>>>>> b315db18d22f91f406527f4e20b3deb5012af5ef
 
 type Language = 'en' | 'ku'
 
@@ -93,7 +90,6 @@ const translations: Record<Language, Record<string, string>> = {
     'modal.approveAndPay': '✓ Approve & Pay',
     'modal.reject': '✗ Reject',
     'modal.managerNote': 'Manager Note',
-<<<<<<< HEAD
     'factory.title': 'Daily Attendance',
     'factory.subtitle': 'Mark workers present or absent for today',
     'factory.present': '✓ Present',
@@ -105,8 +101,6 @@ const translations: Record<Language, Record<string, string>> = {
     'factory.settings.language': 'Language',
     'factory.settings.languageDesc': 'Choose between English and Kurdish for the interface.',
     'factory.settings.saved': 'Your choice is saved in this browser and will be used the next time you open the app.',
-=======
->>>>>>> b315db18d22f91f406527f4e20b3deb5012af5ef
   },
   ku: {
     'sidebar.dashboard': 'داشبۆرد',
@@ -184,7 +178,6 @@ const translations: Record<Language, Record<string, string>> = {
     'modal.approveAndPay': '✓ قبوڵکردن و پارەدان',
     'modal.reject': '✗ رەتکردنەوە',
     'modal.managerNote': 'تێبینی بەڕێوەبەر',
-<<<<<<< HEAD
     'factory.title': 'ئامادەبوونی ڕۆژانە',
     'factory.subtitle': 'کرێکارەکان وەک ئامادەبوو یان غائیب دیاری بکە بۆ ئەمڕۆ',
     'factory.present': '✓ ئامادەیە',
@@ -196,42 +189,20 @@ const translations: Record<Language, Record<string, string>> = {
     'factory.settings.language': 'زمان',
     'factory.settings.languageDesc': 'زمانێک لە نێوان ئینگلیزی و کوردی هەڵبژێرە بۆ ڕووکارەکە.',
     'factory.settings.saved': 'هەڵبژاردنەکەت لەم وێبگەڕەدا پاشەکەوت دەکرێت و بۆ جاری داهاتوو بەکاردێت.',
-=======
->>>>>>> b315db18d22f91f406527f4e20b3deb5012af5ef
   },
 }
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [language, setLanguageState] = useState<Language>('en')
 
-<<<<<<< HEAD
   const applyLanguage = (lang: Language) => {
     setLanguageState(lang)
-=======
-  useEffect(() => {
-    const stored = typeof window !== 'undefined' ? window.localStorage.getItem('appLanguage') : null
-    if (stored === 'en' || stored === 'ku') {
-      setLanguageState(stored)
-      if (typeof document !== 'undefined') {
-        document.documentElement.lang = stored === 'en' ? 'en' : 'ku'
-        document.documentElement.dir = stored === 'ku' ? 'rtl' : 'ltr'
-      }
-    }
-  }, [])
-
-  const setLanguage = (lang: Language) => {
-    setLanguageState(lang)
-    if (typeof window !== 'undefined') {
-      window.localStorage.setItem('appLanguage', lang)
-    }
->>>>>>> b315db18d22f91f406527f4e20b3deb5012af5ef
     if (typeof document !== 'undefined') {
       document.documentElement.lang = lang === 'en' ? 'en' : 'ku'
       document.documentElement.dir = lang === 'ku' ? 'rtl' : 'ltr'
     }
   }
 
-<<<<<<< HEAD
   useEffect(() => {
     const initAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession()
@@ -288,8 +259,6 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-=======
->>>>>>> b315db18d22f91f406527f4e20b3deb5012af5ef
   const t = (key: string): string => {
     return translations[language][key] ?? translations.en[key] ?? key
   }

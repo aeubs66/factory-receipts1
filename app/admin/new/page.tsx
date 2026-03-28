@@ -103,11 +103,7 @@ export default function NewReceiptPage() {
         worker_name: selectedWorker ? selectedWorker.name : form.worker_name,
         worker_id: selectedWorker ? selectedWorker.id : form.worker_id,
         item_description: form.item_description,
-<<<<<<< HEAD
         amount: parseFloat(form.amount.replace(/,/g, '')),
-=======
-        amount: parseFloat(form.amount),
->>>>>>> b315db18d22f91f406527f4e20b3deb5012af5ef
         purchase_date: form.purchase_date,
         image_url,
         status: 'pending',
@@ -212,20 +208,12 @@ export default function NewReceiptPage() {
                 {t('admin.new.amount')}
               </label>
               <input
-<<<<<<< HEAD
                 type="text"
                 value={form.amount}
                 onChange={e => {
                   const val = e.target.value.replace(/[^0-9]/g, '')
                   setForm(p => ({ ...p, amount: val ? Number(val).toLocaleString('en-US') : '' }))
                 }}
-=======
-                type="number"
-                step="0.01"
-                min="0"
-                value={form.amount}
-                onChange={e => setForm(p => ({ ...p, amount: e.target.value }))}
->>>>>>> b315db18d22f91f406527f4e20b3deb5012af5ef
                 className="factory-input"
                 placeholder="0.00"
                 required

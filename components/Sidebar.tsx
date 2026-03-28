@@ -32,10 +32,7 @@ export default function Sidebar({ role, userName }: SidebarProps) {
   const pathname = usePathname()
   const links = role === 'admin' ? adminLinks : managerLinks
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false)
-<<<<<<< HEAD
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-=======
->>>>>>> b315db18d22f91f406527f4e20b3deb5012af5ef
   const userSectionRef = useRef<HTMLDivElement | null>(null)
   const { t } = useLanguage()
 
@@ -53,14 +50,11 @@ export default function Sidebar({ role, userName }: SidebarProps) {
     }
   }, [])
 
-<<<<<<< HEAD
   // Close mobile menu on route change
   useEffect(() => {
     setIsMobileMenuOpen(false)
   }, [pathname])
 
-=======
->>>>>>> b315db18d22f91f406527f4e20b3deb5012af5ef
   const handleLogout = async () => {
     await supabase.auth.signOut()
     router.push('/login')
@@ -82,7 +76,6 @@ export default function Sidebar({ role, userName }: SidebarProps) {
   })
 
   return (
-<<<<<<< HEAD
     <>
       {/* Mobile Header */}
       <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-gray-900 border-b border-gray-800 z-30 flex items-center px-4 justify-between">
@@ -125,22 +118,6 @@ export default function Sidebar({ role, userName }: SidebarProps) {
             </div>
           </div>
         </div>
-=======
-    <aside className="w-64 h-screen sticky top-0 bg-gray-900 border-r border-gray-800 flex flex-col">
-      <div className="p-6 border-b border-gray-800">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-orange-500/20 border border-orange-500/40 rounded-lg flex items-center justify-center">
-            <svg className="w-4 h-4 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-            </svg>
-          </div>
-          <div>
-            <div className="text-white font-bold text-sm font-sans">FactoryPay</div>
-            <div className="text-gray-500 text-xs font-mono">{role === 'admin' ? '👷 Admin' : '👔 Manager'}</div>
-          </div>
-        </div>
-      </div>
->>>>>>> b315db18d22f91f406527f4e20b3deb5012af5ef
 
       <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
         {translatedLinks.map(link => (
@@ -171,19 +148,12 @@ export default function Sidebar({ role, userName }: SidebarProps) {
         </div>
 
         {isAccountMenuOpen && (
-<<<<<<< HEAD
           <div className="absolute bottom-16 left-4 right-4 rounded-lg border border-gray-800 bg-gray-900 shadow-lg shadow-black/40 text-xs font-mono overflow-hidden z-50">
-=======
-          <div className="absolute bottom-16 left-4 right-4 rounded-lg border border-gray-800 bg-gray-900 shadow-lg shadow-black/40 text-xs font-mono overflow-hidden">
->>>>>>> b315db18d22f91f406527f4e20b3deb5012af5ef
             <button
               type="button"
               onClick={() => {
                 setIsAccountMenuOpen(false)
-<<<<<<< HEAD
                 setIsMobileMenuOpen(false)
-=======
->>>>>>> b315db18d22f91f406527f4e20b3deb5012af5ef
                 router.push(role === 'admin' ? '/admin/account' : '/manager/account')
               }}
               className="w-full px-3 py-2 text-left text-gray-200 hover:bg-gray-800/80"
@@ -194,10 +164,7 @@ export default function Sidebar({ role, userName }: SidebarProps) {
               type="button"
               onClick={() => {
                 setIsAccountMenuOpen(false)
-<<<<<<< HEAD
                 setIsMobileMenuOpen(false)
-=======
->>>>>>> b315db18d22f91f406527f4e20b3deb5012af5ef
                 router.push(role === 'admin' ? '/admin/settings' : '/manager/settings')
               }}
               className="w-full px-3 py-2 text-left text-gray-200 hover:bg-gray-800/80 border-t border-gray-800"
@@ -208,10 +175,7 @@ export default function Sidebar({ role, userName }: SidebarProps) {
         )}
       </div>
     </aside>
-<<<<<<< HEAD
     </>
-=======
->>>>>>> b315db18d22f91f406527f4e20b3deb5012af5ef
   )
 }
 

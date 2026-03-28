@@ -7,31 +7,21 @@ interface Worker {
   id: string
   name: string
   monthly_salary: number
-<<<<<<< HEAD
   track_attendance: boolean
-=======
->>>>>>> b315db18d22f91f406527f4e20b3deb5012af5ef
 }
 
 export default function WorkersPage() {
   const [name, setName] = useState('')
   const [monthlySalary, setMonthlySalary] = useState('')
-<<<<<<< HEAD
   const [trackAttendance, setTrackAttendance] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [workers, setWorkers] = useState<Worker[]>([])
   const [editingId, setEditingId] = useState<string | null>(null)
-=======
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-  const [workers, setWorkers] = useState<Worker[]>([])
->>>>>>> b315db18d22f91f406527f4e20b3deb5012af5ef
 
   const loadWorkers = async () => {
     const { data } = await supabase
       .from('workers')
-<<<<<<< HEAD
       .select('id, name, monthly_salary, track_attendance')
       .order('name', { ascending: true })
 
@@ -41,13 +31,6 @@ export default function WorkersPage() {
         monthly_salary: Number(w.monthly_salary || 0),
         track_attendance: !!w.track_attendance
       })))
-=======
-      .select('id, name, monthly_salary')
-      .order('name', { ascending: true })
-
-    if (data) {
-      setWorkers((data as Worker[]).map(w => ({ ...w, monthly_salary: Number(w.monthly_salary || 0) })))
->>>>>>> b315db18d22f91f406527f4e20b3deb5012af5ef
     }
   }
 
@@ -61,7 +44,6 @@ export default function WorkersPage() {
     setError('')
 
     try {
-<<<<<<< HEAD
       if (editingId) {
         const { error: updateError } = await supabase
           .from('workers')
@@ -90,28 +72,11 @@ export default function WorkersPage() {
       await loadWorkers()
     } catch (err: any) {
       setError(err.message || 'Failed to save worker')
-=======
-      const { error: insertError } = await supabase
-        .from('workers')
-        .insert({
-          name,
-          monthly_salary: monthlySalary ? Number(monthlySalary) : 0,
-        })
-
-      if (insertError) throw insertError
-
-      setName('')
-      setMonthlySalary('')
-      await loadWorkers()
-    } catch (err: any) {
-      setError(err.message || 'Failed to add worker')
->>>>>>> b315db18d22f91f406527f4e20b3deb5012af5ef
     } finally {
       setLoading(false)
     }
   }
 
-<<<<<<< HEAD
   const handleEdit = (worker: Worker) => {
     setEditingId(worker.id)
     setName(worker.name)
@@ -138,8 +103,6 @@ export default function WorkersPage() {
     setLoading(false)
   }
 
-=======
->>>>>>> b315db18d22f91f406527f4e20b3deb5012af5ef
   return (
     <div className="p-8 max-w-3xl">
       <div className="mb-8">
@@ -174,25 +137,16 @@ export default function WorkersPage() {
             Monthly Salary
           </label>
           <input
-<<<<<<< HEAD
             type="text"
             value={monthlySalary}
             onChange={e => {
               const val = e.target.value.replace(/[^0-9]/g, '')
               setMonthlySalary(val ? Number(val).toLocaleString('en-US') : '')
             }}
-=======
-            type="number"
-            min="0"
-            step="0.01"
-            value={monthlySalary}
-            onChange={e => setMonthlySalary(e.target.value)}
->>>>>>> b315db18d22f91f406527f4e20b3deb5012af5ef
             className="factory-input"
             placeholder="e.g. 850"
           />
         </div>
-<<<<<<< HEAD
         <div className="flex items-center gap-3">
           <input
             type="checkbox"
@@ -228,15 +182,6 @@ export default function WorkersPage() {
             </button>
           )}
         </div>
-=======
-        <button
-          type="submit"
-          disabled={loading}
-          className="factory-btn-primary w-full flex items-center justify-center gap-2"
-        >
-          {loading ? 'Adding...' : 'Add Worker'}
-        </button>
->>>>>>> b315db18d22f91f406527f4e20b3deb5012af5ef
       </form>
 
       <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
@@ -249,7 +194,6 @@ export default function WorkersPage() {
           <ul className="space-y-2">
             {workers.map(w => (
               <li key={w.id} className="text-gray-200 text-sm font-mono flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 border-b border-gray-800/60 pb-2">
-<<<<<<< HEAD
                 <div className="flex items-center gap-2">
                   <span>{w.name}</span>
                   {w.track_attendance && (
@@ -265,12 +209,6 @@ export default function WorkersPage() {
                     <button onClick={() => handleEdit(w)} className="text-blue-400 hover:text-blue-300 text-xs transition-colors">Edit</button>
                     <button onClick={() => handleDelete(w.id)} className="text-red-400 hover:text-red-300 text-xs transition-colors">Delete</button>
                   </div>
-=======
-                <span>{w.name}</span>
-                <div className="flex flex-col sm:items-end">
-                  <span className="text-emerald-400 text-xs">${w.monthly_salary.toFixed(2)} / month</span>
-                  <span className="text-gray-600 text-xs truncate max-w-[220px]">{w.id}</span>
->>>>>>> b315db18d22f91f406527f4e20b3deb5012af5ef
                 </div>
               </li>
             ))}

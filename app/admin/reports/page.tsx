@@ -107,21 +107,12 @@ export default function ReportsPage() {
               <div key={row.month} className="border border-gray-800 rounded-lg p-3">
                 <div className="flex items-center justify-between mb-2">
                   <p className="text-white font-medium">{new Date(`${row.month}-01`).toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}</p>
-<<<<<<< HEAD
                   <p className="text-orange-300 font-semibold">{Math.round(row.total).toLocaleString('en-IQ')} IQD</p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs font-mono">
                   <span className="text-orange-400">Receipts: {Math.round(row.receipts).toLocaleString('en-IQ')} IQD</span>
                   <span className="text-emerald-400">Salaries: {Math.round(row.salaries).toLocaleString('en-IQ')} IQD</span>
                   <span className="text-rose-400">Expenses: {Math.round(row.expenses).toLocaleString('en-IQ')} IQD</span>
-=======
-                  <p className="text-orange-300 font-semibold">${row.total.toFixed(2)}</p>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs font-mono">
-                  <span className="text-orange-400">Receipts: ${row.receipts.toFixed(2)}</span>
-                  <span className="text-emerald-400">Salaries: ${row.salaries.toFixed(2)}</span>
-                  <span className="text-rose-400">Expenses: ${row.expenses.toFixed(2)}</span>
->>>>>>> b315db18d22f91f406527f4e20b3deb5012af5ef
                 </div>
               </div>
             ))}
@@ -136,11 +127,7 @@ function StatCard({ title, value, color }: { title: string, value: number, color
   return (
     <div className="bg-gray-900 border border-gray-800 rounded-xl p-4">
       <p className="text-gray-500 text-xs uppercase tracking-wide font-mono">{title}</p>
-<<<<<<< HEAD
       <p className={`text-2xl font-semibold mt-2 ${color}`}>{Math.round(value).toLocaleString('en-IQ')} IQD</p>
-=======
-      <p className={`text-2xl font-semibold mt-2 ${color}`}>${value.toFixed(2)}</p>
->>>>>>> b315db18d22f91f406527f4e20b3deb5012af5ef
     </div>
   )
 }

@@ -36,11 +36,8 @@ export default function LoginPage() {
 
       if (profile?.role === 'manager') {
         router.push('/manager')
-<<<<<<< HEAD
       } else if (profile?.role === 'factory_manager') {
         router.push('/factory')
-=======
->>>>>>> b315db18d22f91f406527f4e20b3deb5012af5ef
       } else {
         router.push('/admin')
       }
