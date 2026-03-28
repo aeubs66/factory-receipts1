@@ -15,6 +15,7 @@ interface ReceiptModalProps {
 export default function ReceiptModal({ receipt, isManager, onClose, onUpdate }: ReceiptModalProps) {
   const [note, setNote] = useState(receipt.manager_note || '')
   const [loading, setLoading] = useState(false)
+<<<<<<< HEAD
   const [isEditing, setIsEditing] = useState(false)
   const [editForm, setEditForm] = useState({
     worker_name: receipt.worker_name,
@@ -23,6 +24,8 @@ export default function ReceiptModal({ receipt, isManager, onClose, onUpdate }: 
     amount: receipt.amount ? receipt.amount.toLocaleString('en-US') : '',
     purchase_date: receipt.purchase_date.split('T')[0]
   })
+=======
+>>>>>>> b315db18d22f91f406527f4e20b3deb5012af5ef
   const { t } = useLanguage()
 
   const handleAction = async (action: 'approved' | 'rejected') => {
@@ -52,6 +55,7 @@ export default function ReceiptModal({ receipt, isManager, onClose, onUpdate }: 
     setLoading(false)
   }
 
+<<<<<<< HEAD
   const handleSaveEdit = async () => {
     setLoading(true)
     const { error } = await supabase.from('receipts').update({
@@ -71,6 +75,8 @@ export default function ReceiptModal({ receipt, isManager, onClose, onUpdate }: 
     setLoading(false)
   }
 
+=======
+>>>>>>> b315db18d22f91f406527f4e20b3deb5012af5ef
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose}>
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
@@ -86,6 +92,7 @@ export default function ReceiptModal({ receipt, isManager, onClose, onUpdate }: 
           </div>
           <div className="flex items-center gap-4">
             <button 
+<<<<<<< HEAD
               onClick={() => setIsEditing(!isEditing)} 
               disabled={loading}
               className="text-blue-500 hover:text-blue-400 transition-colors disabled:opacity-50"
@@ -96,6 +103,8 @@ export default function ReceiptModal({ receipt, isManager, onClose, onUpdate }: 
               </svg>
             </button>
             <button 
+=======
+>>>>>>> b315db18d22f91f406527f4e20b3deb5012af5ef
               onClick={handleDelete} 
               disabled={loading}
               className="text-red-500 hover:text-red-400 transition-colors disabled:opacity-50"
@@ -127,6 +136,7 @@ export default function ReceiptModal({ receipt, isManager, onClose, onUpdate }: 
             </div>
           )}
 
+<<<<<<< HEAD
           {isEditing ? (
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
@@ -189,6 +199,34 @@ export default function ReceiptModal({ receipt, isManager, onClose, onUpdate }: 
               </div>
             </>
           )}
+=======
+          {/* Details grid */}
+          <div className="grid grid-cols-2 gap-4">
+            {[
+              { label: t('modal.workerName'), value: receipt.worker_name },
+              { label: t('modal.workerId'), value: receipt.worker_id },
+              { label: t('modal.amount'), value: `${Math.round(Number(receipt.amount)).toLocaleString('en-IQ')} IQD` },
+              { label: t('modal.purchaseDate'), value: new Date(receipt.purchase_date).toLocaleDateString() },
+            ].map(({ label, value }) => (
+              <div key={label} className="bg-gray-800/50 rounded-lg p-3">
+                <div className="text-gray-500 text-xs font-mono mb-1">{label}</div>
+                <div className="text-white text-sm font-mono">{value}</div>
+              </div>
+            ))}
+          </div>
+
+          <div className="bg-gray-800/50 rounded-lg p-3">
+            <div className="text-gray-500 text-xs font-mono mb-1">{t('modal.itemDescription')}</div>
+            <div className="text-white text-sm font-mono">{receipt.item_description}</div>
+          </div>
+
+          <div className="bg-gray-800/50 rounded-lg p-3">
+            <div className="text-gray-500 text-xs font-mono mb-1">{t('modal.submitted')}</div>
+            <div className="text-white text-sm font-mono">
+              {new Date(receipt.created_at).toLocaleString()}
+            </div>
+          </div>
+>>>>>>> b315db18d22f91f406527f4e20b3deb5012af5ef
 
           {/* Manager actions */}
           {isManager && receipt.status === 'pending' && (

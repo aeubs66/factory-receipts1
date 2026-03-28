@@ -7,7 +7,11 @@
 CREATE TABLE profiles (
   id UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
   full_name TEXT NOT NULL,
+<<<<<<< HEAD
   role TEXT NOT NULL CHECK (role IN ('admin', 'manager', 'factory_manager')),
+=======
+  role TEXT NOT NULL CHECK (role IN ('admin', 'manager')),
+>>>>>>> b315db18d22f91f406527f4e20b3deb5012af5ef
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -32,7 +36,10 @@ CREATE TABLE workers (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   name TEXT NOT NULL,
   monthly_salary DECIMAL(10,2) NOT NULL DEFAULT 0,
+<<<<<<< HEAD
   track_attendance BOOLEAN NOT NULL DEFAULT false,
+=======
+>>>>>>> b315db18d22f91f406527f4e20b3deb5012af5ef
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -42,7 +49,10 @@ CREATE TABLE salary_payments (
   worker_name TEXT NOT NULL,
   month DATE NOT NULL,
   amount DECIMAL(10,2) NOT NULL CHECK (amount >= 0),
+<<<<<<< HEAD
   days_absent INTEGER NOT NULL DEFAULT 0,
+=======
+>>>>>>> b315db18d22f91f406527f4e20b3deb5012af5ef
   note TEXT,
   created_by UUID REFERENCES profiles(id) ON DELETE SET NULL,
   created_at TIMESTAMPTZ DEFAULT NOW()
@@ -58,6 +68,7 @@ CREATE TABLE expenses (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+<<<<<<< HEAD
 -- Note: The attendance table tracks daily worker presence/absence specifically for the factory manager.
 CREATE TABLE attendance (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -69,6 +80,8 @@ CREATE TABLE attendance (
   UNIQUE(worker_id, date)
 );
 
+=======
+>>>>>>> b315db18d22f91f406527f4e20b3deb5012af5ef
 -- 4. Auto-update updated_at
 CREATE OR REPLACE FUNCTION update_updated_at()
 RETURNS TRIGGER AS $$
@@ -88,13 +101,17 @@ ALTER TABLE receipts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE workers ENABLE ROW LEVEL SECURITY;
 ALTER TABLE salary_payments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE expenses ENABLE ROW LEVEL SECURITY;
+<<<<<<< HEAD
 ALTER TABLE attendance ENABLE ROW LEVEL SECURITY;
+=======
+>>>>>>> b315db18d22f91f406527f4e20b3deb5012af5ef
 
 -- Profiles: users can read all profiles, only update their own
 CREATE POLICY "Anyone can read profiles" ON profiles FOR SELECT USING (true);
 CREATE POLICY "Users can update own profile" ON profiles FOR UPDATE USING (auth.uid() = id);
 CREATE POLICY "Users can insert own profile" ON profiles FOR INSERT WITH CHECK (auth.uid() = id);
 
+<<<<<<< HEAD
 -- Receipts: admins can manage all, managers can read and update
 CREATE POLICY "Admins can manage all receipts" ON receipts
   FOR ALL USING (
@@ -106,6 +123,17 @@ CREATE POLICY "Admins can manage all receipts" ON receipts
 
 CREATE POLICY "Managers can view all receipts" ON receipts
   FOR SELECT USING (
+=======
+-- Receipts: admins can insert, managers can read all, admins can read their own
+CREATE POLICY "Admins can insert receipts" ON receipts
+  FOR INSERT WITH CHECK (
+    EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
+  );
+
+CREATE POLICY "Admins can view own receipts" ON receipts
+  FOR SELECT USING (
+    submitted_by = auth.uid() OR
+>>>>>>> b315db18d22f91f406527f4e20b3deb5012af5ef
     EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'manager')
   );
 
@@ -147,6 +175,7 @@ CREATE POLICY "Admins can manage expenses" ON expenses
     EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
   );
 
+<<<<<<< HEAD
 -- Attendance: Admins can manage all, Factory Managers can insert/update today's attendance
 CREATE POLICY "Admins have full access to attendance" ON attendance
   FOR ALL USING (
@@ -168,6 +197,8 @@ CREATE POLICY "Factory Managers can read attendance" ON attendance
     EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'factory_manager')
   );
 
+=======
+>>>>>>> b315db18d22f91f406527f4e20b3deb5012af5ef
 -- 6. Storage bucket for receipt images
 INSERT INTO storage.buckets (id, name, public) VALUES ('receipts', 'receipts', true);
 

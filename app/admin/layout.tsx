@@ -4,6 +4,10 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import Sidebar from '@/components/Sidebar'
+<<<<<<< HEAD
+=======
+import MobileNav from '@/components/MobileNav'
+>>>>>>> b315db18d22f91f406527f4e20b3deb5012af5ef
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter()
@@ -42,10 +46,20 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <div className="flex min-h-screen bg-gray-950">
+<<<<<<< HEAD
       <Sidebar role="admin" userName={userName} />
       <main className="flex-1 overflow-auto p-4 pt-20 sm:p-6 md:p-8 md:pt-8 pb-8">
         {children}
       </main>
+=======
+      <div className="hidden md:block">
+        <Sidebar role="admin" userName={userName} />
+      </div>
+      <main className="flex-1 overflow-auto p-4 sm:p-6 md:p-8 pb-24 md:pb-8">
+        {children}
+      </main>
+      <MobileNav role="admin" />
+>>>>>>> b315db18d22f91f406527f4e20b3deb5012af5ef
     </div>
   )
 }

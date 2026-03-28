@@ -24,8 +24,11 @@ export default function HomePage() {
 
       if (profile?.role === 'manager') {
         router.replace('/manager')
+<<<<<<< HEAD
       } else if (profile?.role === 'factory_manager') {
         router.replace('/factory')
+=======
+>>>>>>> b315db18d22f91f406527f4e20b3deb5012af5ef
       } else {
         router.replace('/admin')
       }
