@@ -14,6 +14,7 @@ interface ReceiptModalProps {
 
 export default function ReceiptModal({ receipt, isManager, onClose, onUpdate }: ReceiptModalProps) {
   const [note, setNote] = useState(receipt.manager_note || '')
+  const [countAsExpense, setCountAsExpense] = useState(false)
   const [loading, setLoading] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [editForm, setEditForm] = useState({
@@ -33,6 +34,14 @@ export default function ReceiptModal({ receipt, isManager, onClose, onUpdate }: 
       .eq('id', receipt.id)
 
     if (!error) {
+      if (action === 'approved' && countAsExpense) {
+        await supabase.from('expenses').insert({
+          category: 'operations',
+          description: `Receipt: ${receipt.item_description} (${receipt.worker_name})`,
+          amount: Number(receipt.amount),
+          spent_on: receipt.purchase_date.split('T')[0],
+        })
+      }
       onUpdate()
       onClose()
     }
@@ -61,7 +70,7 @@ export default function ReceiptModal({ receipt, isManager, onClose, onUpdate }: 
       amount: Number(editForm.amount.replace(/,/g, '')),
       purchase_date: editForm.purchase_date,
     }).eq('id', receipt.id)
-    
+
     if (!error) {
       onUpdate()
       setIsEditing(false)
@@ -85,8 +94,8 @@ export default function ReceiptModal({ receipt, isManager, onClose, onUpdate }: 
             <p className="text-gray-500 text-xs font-mono">#{receipt.id.slice(0, 16)}</p>
           </div>
           <div className="flex items-center gap-4">
-            <button 
-              onClick={() => setIsEditing(!isEditing)} 
+            <button
+              onClick={() => setIsEditing(!isEditing)}
               disabled={loading}
               className="text-blue-500 hover:text-blue-400 transition-colors disabled:opacity-50"
               title="Edit Receipt"
@@ -95,8 +104,8 @@ export default function ReceiptModal({ receipt, isManager, onClose, onUpdate }: 
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
               </svg>
             </button>
-            <button 
-              onClick={handleDelete} 
+            <button
+              onClick={handleDelete}
               disabled={loading}
               className="text-red-500 hover:text-red-400 transition-colors disabled:opacity-50"
               title="Delete Receipt"
@@ -132,27 +141,27 @@ export default function ReceiptModal({ receipt, isManager, onClose, onUpdate }: 
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-gray-500 text-xs font-mono mb-1 block">{t('modal.workerName')}</label>
-                  <input className="factory-input" value={editForm.worker_name} onChange={e => setEditForm({...editForm, worker_name: e.target.value})} />
+                  <input className="factory-input" value={editForm.worker_name} onChange={e => setEditForm({ ...editForm, worker_name: e.target.value })} />
                 </div>
                 <div>
                   <label className="text-gray-500 text-xs font-mono mb-1 block">{t('modal.workerId')}</label>
-                  <input className="factory-input" value={editForm.worker_id} onChange={e => setEditForm({...editForm, worker_id: e.target.value})} />
+                  <input className="factory-input" value={editForm.worker_id} onChange={e => setEditForm({ ...editForm, worker_id: e.target.value })} />
                 </div>
                 <div>
                   <label className="text-gray-500 text-xs font-mono mb-1 block">{t('modal.amount')}</label>
                   <input className="factory-input" type="text" value={editForm.amount} onChange={e => {
                     const val = e.target.value.replace(/[^0-9]/g, '')
-                    setEditForm({...editForm, amount: val ? Number(val).toLocaleString('en-US') : ''})
+                    setEditForm({ ...editForm, amount: val ? Number(val).toLocaleString('en-US') : '' })
                   }} />
                 </div>
                 <div>
                   <label className="text-gray-500 text-xs font-mono mb-1 block">{t('modal.purchaseDate')}</label>
-                  <input className="factory-input" type="date" value={editForm.purchase_date} onChange={e => setEditForm({...editForm, purchase_date: e.target.value})} />
+                  <input className="factory-input" type="date" value={editForm.purchase_date} onChange={e => setEditForm({ ...editForm, purchase_date: e.target.value })} />
                 </div>
               </div>
               <div>
                 <label className="text-gray-500 text-xs font-mono mb-1 block">{t('modal.itemDescription')}</label>
-                <input className="factory-input w-full" value={editForm.item_description} onChange={e => setEditForm({...editForm, item_description: e.target.value})} />
+                <input className="factory-input w-full" value={editForm.item_description} onChange={e => setEditForm({ ...editForm, item_description: e.target.value })} />
               </div>
               <div className="flex gap-2 justify-end mt-2">
                 <button onClick={() => setIsEditing(false)} disabled={loading} className="factory-btn-secondary text-sm py-2 px-4">Cancel</button>
@@ -202,6 +211,18 @@ export default function ReceiptModal({ receipt, isManager, onClose, onUpdate }: 
                 className="factory-input resize-none h-20"
                 placeholder={t('modal.managerNotePlaceholder')}
               />
+              <div className="flex items-center gap-2 px-1">
+                <input
+                  type="checkbox"
+                  id="count-as-expense"
+                  checked={countAsExpense}
+                  onChange={(e) => setCountAsExpense(e.target.checked)}
+                  className="w-4 h-4 rounded border-gray-600 bg-gray-700 text-emerald-500 focus:ring-emerald-500 focus:ring-offset-gray-900"
+                />
+                <label htmlFor="count-as-expense" className="text-gray-300 text-sm font-mono cursor-pointer">
+                  Count this receipt as a factory expense
+                </label>
+              </div>
               <div className="flex gap-3">
                 <button
                   onClick={() => handleAction('approved')}
