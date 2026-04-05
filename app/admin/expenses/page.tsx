@@ -14,9 +14,20 @@ interface Expense {
 
 const currentMonth = new Date().toISOString().slice(0, 7)
 
+const categoryKurdish: Record<string, string> = {
+  operations: 'کارپێکردن',
+  equipment: 'ئامێرەکان',
+  utilities: 'خزمەتگوزارییەکان',
+  maintenance: 'چاککردنەوە',
+  transport: 'گواستنەوە',
+  salaries: 'موچەکان',
+  other: 'دیکە',
+}
+
 export default function ExpensesPage() {
   const [month, setMonth] = useState(currentMonth)
   const [category, setCategory] = useState('operations')
+  const [customCategory, setCustomCategory] = useState('')
   const [description, setDescription] = useState('')
   const [amount, setAmount] = useState('')
   const [spentOn, setSpentOn] = useState(new Date().toISOString().slice(0, 10))
@@ -55,9 +66,11 @@ export default function ExpensesPage() {
     setLoading(true)
     setError('')
 
+    const finalCategory = category === 'other' && customCategory.trim() ? customCategory.trim() : category
+
     if (editingId) {
       const { error: updateError } = await supabase.from('expenses').update({
-        category,
+        category: finalCategory,
         description,
         amount: Number(amount.replace(/,/g, '')),
         spent_on: spentOn,
@@ -71,7 +84,7 @@ export default function ExpensesPage() {
       setEditingId(null)
     } else {
       const { error: insertError } = await supabase.from('expenses').insert({
-        category,
+        category: finalCategory,
         description,
         amount: Number(amount.replace(/,/g, '')),
         spent_on: spentOn,
@@ -92,7 +105,13 @@ export default function ExpensesPage() {
 
   const handleEdit = (expense: Expense) => {
     setEditingId(expense.id)
-    setCategory(expense.category)
+    if (['operations', 'equipment', 'utilities', 'maintenance', 'transport', 'salaries', 'other'].includes(expense.category.toLowerCase())) {
+      setCategory(expense.category.toLowerCase())
+      setCustomCategory('')
+    } else {
+      setCategory('other')
+      setCustomCategory(expense.category)
+    }
     setDescription(expense.description)
     setAmount(expense.amount ? expense.amount.toLocaleString('en-US') : '')
     setSpentOn(expense.spent_on)
@@ -162,10 +181,17 @@ export default function ExpensesPage() {
   return (
     <div className="p-8 max-w-4xl">
       {/* Print-only header */}
-      <div className="hidden print:block mb-6">
-        <h1 className="text-2xl font-bold" style={{ color: '#000' }}>Ali Duct Factory &mdash; Expense Report</h1>
-        <p style={{ color: '#444' }} className="text-sm">Period: {reportTitle}</p>
-        <p style={{ color: '#888' }} className="text-xs">Generated: {new Date().toLocaleString()}</p>
+      <div className="hidden print:block mb-8 border-b-2 border-black pb-4 text-black">
+        <div className="flex justify-between items-end mb-4">
+          <div>
+            <h1 className="text-3xl font-bold uppercase tracking-wider mb-1">Ali Duct Factory</h1>
+            <p className="text-lg font-semibold text-gray-700">Official Expense Report</p>
+          </div>
+          <div className="text-right">
+            <p className="font-bold text-lg">Period: {reportTitle}</p>
+            <p className="text-sm text-gray-600">Generated: {new Date().toLocaleString()}</p>
+          </div>
+        </div>
       </div>
 
       <div className="mb-8 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 print:hidden">
@@ -215,7 +241,7 @@ export default function ExpensesPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="text-gray-400 text-xs font-mono uppercase tracking-wider mb-2 block">Category</label>
-            <select value={category} onChange={e => setCategory(e.target.value)} className="factory-input">
+            <select value={category} onChange={e => setCategory(e.target.value)} className={`factory-input ${category === 'other' ? 'mb-2' : ''}`}>
               <option value="operations">Operations</option>
               <option value="equipment">Equipment</option>
               <option value="utilities">Utilities</option>
@@ -223,6 +249,16 @@ export default function ExpensesPage() {
               <option value="transport">Transport</option>
               <option value="other">Other</option>
             </select>
+            {category === 'other' && (
+              <input 
+                type="text" 
+                value={customCategory} 
+                onChange={e => setCustomCategory(e.target.value)} 
+                className="factory-input" 
+                placeholder="Specify category..." 
+                required 
+              />
+            )}
           </div>
 
           <div>
@@ -281,7 +317,7 @@ export default function ExpensesPage() {
         {expenses.length === 0 ? (
           <p className="text-gray-500 font-mono text-sm">No expenses recorded for this month.</p>
         ) : (
-          <ul className="space-y-2">
+          <ul className="space-y-2 print:hidden">
             {expenses.map(expense => (
               <li key={expense.id} className="border border-gray-800 rounded-lg p-3 flex flex-col sm:flex-row sm:items-start justify-between gap-2">
                 <div className="flex-1">
@@ -291,8 +327,8 @@ export default function ExpensesPage() {
                   </p>
                 </div>
                 <div className="flex flex-col sm:items-end gap-2">
-                  <p className="text-rose-400 font-semibold print:text-black">{Math.round(expense.amount).toLocaleString('en-IQ')} IQD</p>
-                  <div className="flex items-center gap-3 mt-1 sm:mt-0 print:hidden">
+                  <p className="text-rose-400 font-semibold">{Math.round(expense.amount).toLocaleString('en-IQ')} IQD</p>
+                  <div className="flex items-center gap-3 mt-1 sm:mt-0">
                     <button onClick={() => handleEdit(expense)} className="text-blue-400 hover:text-blue-300 text-xs transition-colors">Edit</button>
                     <button onClick={() => handleDelete(expense.id)} className="text-red-400 hover:text-red-300 text-xs transition-colors">Delete</button>
                   </div>
@@ -300,6 +336,36 @@ export default function ExpensesPage() {
               </li>
             ))}
           </ul>
+        )}
+
+        {/* Pro Table for Printing */}
+        {expenses.length > 0 && (
+          <table className="w-full hidden print:table border-collapse text-black">
+            <thead>
+              <tr className="border-b-2 border-black text-left">
+                <th className="py-2 text-sm font-bold w-1/4">Date</th>
+                <th className="py-2 text-sm font-bold w-1/4">Category</th>
+                <th className="py-2 text-sm font-bold">Description</th>
+                <th className="py-2 text-sm font-bold text-right w-1/4">Amount (IQD)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {expenses.map(expense => (
+                <tr key={`${expense.id}-print`} className="border-b border-gray-300">
+                  <td className="py-2 text-sm">{new Date(expense.spent_on).toLocaleDateString()}</td>
+                  <td className="py-2 text-sm uppercase text-gray-600">{categoryKurdish[expense.category] || expense.category}</td>
+                  <td className="py-2 text-sm">{expense.description}</td>
+                  <td className="py-2 text-sm font-semibold text-right">{Math.round(expense.amount).toLocaleString('en-IQ')}</td>
+                </tr>
+              ))}
+            </tbody>
+            <tfoot>
+              <tr className="border-t-2 border-black">
+                <td colSpan={3} className="py-3 font-bold text-right text-lg">Total Expenses:</td>
+                <td className="py-3 font-bold text-right text-lg">{Math.round(total).toLocaleString('en-IQ')}</td>
+              </tr>
+            </tfoot>
+          </table>
         )}
       </div>
     </div>

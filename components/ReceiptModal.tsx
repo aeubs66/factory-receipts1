@@ -14,7 +14,7 @@ interface ReceiptModalProps {
 
 export default function ReceiptModal({ receipt, isManager, onClose, onUpdate }: ReceiptModalProps) {
   const [note, setNote] = useState(receipt.manager_note || '')
-  const [countAsExpense, setCountAsExpense] = useState(false)
+  const [countAsExpense, setCountAsExpense] = useState(receipt.add_as_expense || false)
   const [loading, setLoading] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [editForm, setEditForm] = useState({
@@ -36,7 +36,7 @@ export default function ReceiptModal({ receipt, isManager, onClose, onUpdate }: 
     if (!error) {
       if (action === 'approved' && countAsExpense) {
         await supabase.from('expenses').insert({
-          category: 'operations',
+          category: receipt.expense_category || 'operations',
           description: `Receipt: ${receipt.item_description} (${receipt.worker_name})`,
           amount: Number(receipt.amount),
           spent_on: receipt.purchase_date.split('T')[0],

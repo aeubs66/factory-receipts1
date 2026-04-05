@@ -12,7 +12,6 @@ interface SidebarProps {
 
 const adminLinks = [
   { href: '/admin', label: 'Dashboard', icon: <GridIcon /> },
-  { href: '/admin/new', label: 'New Receipt', icon: <PlusIcon /> },
   { href: '/admin/history', label: 'My Receipts', icon: <DocumentIcon /> },
   { href: '/admin/users', label: 'User Accounts', icon: <UsersIcon /> },
   { href: '/admin/workers', label: 'Workers', icon: <WorkersIcon /> },
@@ -63,7 +62,6 @@ export default function Sidebar({ role, userName }: SidebarProps) {
   const translatedLinks = links.map(link => {
     if (role === 'admin') {
       if (link.href === '/admin') return { ...link, label: t('sidebar.dashboard') }
-      if (link.href === '/admin/new') return { ...link, label: t('sidebar.newReceipt') }
       if (link.href === '/admin/history') return { ...link, label: t('sidebar.myReceipts') }
       if (link.href === '/admin/users') return { ...link, label: t('sidebar.userAccounts') }
       if (link.href === '/admin/workers') return { ...link, label: t('sidebar.workers') }

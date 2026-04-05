@@ -24,6 +24,8 @@ CREATE TABLE receipts (
   amount DECIMAL(10,2) NOT NULL,
   purchase_date DATE NOT NULL,
   image_url TEXT,
+  add_as_expense BOOLEAN DEFAULT false,
+  expense_category TEXT DEFAULT 'operations',
   status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected')),
   manager_note TEXT,
   submitted_by UUID REFERENCES profiles(id) ON DELETE SET NULL,

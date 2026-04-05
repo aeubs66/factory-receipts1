@@ -26,10 +26,13 @@ export default function SalariesPage() {
   const [payments, setPayments] = useState<SalaryPayment[]>([])
   const [selectedWorkerId, setSelectedWorkerId] = useState('')
   const [month, setMonth] = useState(monthValue)
+  const [daysAttended, setDaysAttended] = useState('30')
   const [daysAbsent, setDaysAbsent] = useState('0')
   const [amount, setAmount] = useState('')
   const [note, setNote] = useState('')
   const [loading, setLoading] = useState(false)
+  const [addAsExpense, setAddAsExpense] = useState(true)
+  const [expenseMonth, setExpenseMonth] = useState(monthValue)
   const [error, setError] = useState('')
   const [editingId, setEditingId] = useState<string | null>(null)
 
@@ -65,9 +68,7 @@ export default function SalariesPage() {
   useEffect(() => {
     if (selectedWorker) {
       const absent = Number(daysAbsent) || 0
-      const [yearStr, monthStr] = month.split('-')
-      const daysInMonth = new Date(Number(yearStr), Number(monthStr), 0).getDate() || 30
-      const dailyRate = selectedWorker.monthly_salary / daysInMonth
+      const dailyRate = selectedWorker.monthly_salary / 30
       const calculatedAmount = Math.max(0, selectedWorker.monthly_salary - (dailyRate * absent))
       setAmount(calculatedAmount ? calculatedAmount.toLocaleString('en-US') : '')
     }
@@ -91,6 +92,7 @@ export default function SalariesPage() {
 
       if (count !== null) {
         setDaysAbsent(String(count))
+        setDaysAttended(String(Math.max(0, 30 - count)))
       }
     }
     
@@ -128,10 +130,20 @@ export default function SalariesPage() {
         setLoading(false)
         return
       }
+
+      if (addAsExpense) {
+        await supabase.from('expenses').insert({
+          category: 'operations',
+          description: `Salary Payment: ${selectedWorker.name}`,
+          amount: Number(amount.replace(/,/g, '')),
+          spent_on: `${expenseMonth}-01`,
+        })
+      }
     }
 
     setNote('')
     setDaysAbsent('0')
+    setDaysAttended('30')
     await loadData()
     setLoading(false)
   }
@@ -140,7 +152,9 @@ export default function SalariesPage() {
     setEditingId(payment.id)
     setSelectedWorkerId(payment.worker_id)
     setMonth(payment.month.substring(0, 7))
-    setDaysAbsent(String(payment.days_absent || 0))
+    const absent = payment.days_absent || 0
+    setDaysAbsent(String(absent))
+    setDaysAttended(String(Math.max(0, 30 - absent)))
     setAmount(payment.amount ? payment.amount.toLocaleString('en-US') : '')
     setNote(payment.note || '')
     window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -158,6 +172,7 @@ export default function SalariesPage() {
         setEditingId(null)
         setNote('')
         setDaysAbsent('0')
+        setDaysAttended('30')
       }
     }
     setLoading(false)
@@ -199,16 +214,51 @@ export default function SalariesPage() {
             />
           </div>
 
-          <div>
-            <label className="text-gray-400 text-xs font-mono uppercase tracking-wider mb-2 block">Days Absent</label>
-            <input
-              type="number"
-              min="0"
-              max="31"
-              value={daysAbsent}
-              onChange={e => setDaysAbsent(e.target.value)}
-              className="factory-input"
-            />
+          <div className="grid grid-cols-2 gap-2">
+            <div>
+              <label className="text-gray-400 text-xs font-mono uppercase tracking-wider mb-2 block">Attended</label>
+              <input
+                type="number"
+                min="0"
+                max="30"
+                value={daysAttended === '' ? '' : daysAttended}
+                onChange={e => {
+                  if (e.target.value === '') {
+                    setDaysAttended('')
+                    return
+                  }
+                  let val = parseInt(e.target.value)
+                  if (isNaN(val)) val = 0
+                  if (val > 30) val = 30
+                  if (val < 0) val = 0
+                  setDaysAttended(String(val))
+                  setDaysAbsent(String(30 - val))
+                }}
+                className="factory-input"
+              />
+            </div>
+            <div>
+              <label className="text-gray-400 text-xs font-mono uppercase tracking-wider mb-2 block">Absent</label>
+              <input
+                type="number"
+                min="0"
+                max="30"
+                value={daysAbsent === '' ? '' : daysAbsent}
+                onChange={e => {
+                  if (e.target.value === '') {
+                    setDaysAbsent('')
+                    return
+                  }
+                  let val = parseInt(e.target.value)
+                  if (isNaN(val)) val = 0
+                  if (val > 30) val = 30
+                  if (val < 0) val = 0
+                  setDaysAbsent(String(val))
+                  setDaysAttended(String(30 - val))
+                }}
+                className="factory-input"
+              />
+            </div>
           </div>
 
           <div>
@@ -235,6 +285,32 @@ export default function SalariesPage() {
               placeholder="Optional"
             />
           </div>
+
+          <div className="md:col-span-2 bg-gray-800/50 p-4 rounded-lg flex flex-col md:flex-row gap-4 md:items-center justify-between border border-gray-700">
+            <div className="flex items-center gap-3">
+              <input
+                type="checkbox"
+                id="add-as-expense"
+                checked={addAsExpense}
+                onChange={e => setAddAsExpense(e.target.checked)}
+                className="w-4 h-4 rounded border-gray-600 bg-gray-700 text-orange-500 focus:ring-orange-500"
+              />
+              <label htmlFor="add-as-expense" className="text-gray-300 text-sm font-mono cursor-pointer">
+                Also record as a factory expense
+              </label>
+            </div>
+            {addAsExpense && !editingId && (
+              <div className="flex items-center gap-3">
+                <label className="text-gray-400 text-xs font-mono uppercase tracking-wider whitespace-nowrap">Expense Month</label>
+                <input
+                  type="month"
+                  value={expenseMonth}
+                  onChange={e => setExpenseMonth(e.target.value)}
+                  className="factory-input py-1.5"
+                />
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="flex gap-3">
@@ -249,6 +325,7 @@ export default function SalariesPage() {
                 setEditingId(null)
                 setNote('')
                 setDaysAbsent('0')
+                setDaysAttended('30')
               }}
               className="factory-btn-secondary"
             >

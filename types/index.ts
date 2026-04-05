@@ -13,6 +13,8 @@ export interface Receipt {
   created_at: string
   updated_at: string
   submitted_by: string // admin user id
+  add_as_expense?: boolean
+  expense_category?: string
 }
 
 export interface User {
