@@ -65,6 +65,7 @@ CREATE TABLE expenses (
   category TEXT NOT NULL DEFAULT 'operations',
   description TEXT NOT NULL,
   amount DECIMAL(10,2) NOT NULL CHECK (amount >= 0),
+  currency TEXT NOT NULL DEFAULT 'IQD' CHECK (currency IN ('IQD', 'USD')),
   spent_on DATE NOT NULL,
   created_by UUID REFERENCES profiles(id) ON DELETE SET NULL,
   created_at TIMESTAMPTZ DEFAULT NOW()

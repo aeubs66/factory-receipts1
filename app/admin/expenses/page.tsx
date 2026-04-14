@@ -8,6 +8,7 @@ interface Expense {
   category: string
   description: string
   amount: number
+  currency: 'IQD' | 'USD'
   spent_on: string
   created_at: string
 }
@@ -30,13 +31,15 @@ export default function ExpensesPage() {
   const [customCategory, setCustomCategory] = useState('')
   const [description, setDescription] = useState('')
   const [amount, setAmount] = useState('')
+  const [currency, setCurrency] = useState<'IQD' | 'USD'>('IQD')
   const [spentOn, setSpentOn] = useState(new Date().toISOString().slice(0, 10))
   const [expenses, setExpenses] = useState<Expense[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [editingId, setEditingId] = useState<string | null>(null)
 
-  const total = useMemo(() => expenses.reduce((sum, expense) => sum + expense.amount, 0), [expenses])
+  const totalIQD = useMemo(() => expenses.filter(e => e.currency === 'IQD' || !e.currency).reduce((sum, expense) => sum + expense.amount, 0), [expenses])
+  const totalUSD = useMemo(() => expenses.filter(e => e.currency === 'USD').reduce((sum, expense) => sum + expense.amount, 0), [expenses])
 
   const loadExpenses = async (selectedMonth: string) => {
     const startDate = `${selectedMonth}-01`
@@ -46,14 +49,14 @@ export default function ExpensesPage() {
 
     const { data } = await supabase
       .from('expenses')
-      .select('id, category, description, amount, spent_on, created_at')
+      .select('id, category, description, amount, currency, spent_on, created_at')
       .gte('spent_on', startDate)
       .lt('spent_on', endDateText)
       .order('spent_on', { ascending: false })
       .limit(300)
 
     if (data) {
-      setExpenses((data as Expense[]).map(expense => ({ ...expense, amount: Number(expense.amount || 0) })))
+      setExpenses((data as Expense[]).map(expense => ({ ...expense, amount: Number(expense.amount || 0), currency: expense.currency || 'IQD' })))
     }
   }
 
@@ -72,7 +75,8 @@ export default function ExpensesPage() {
       const { error: updateError } = await supabase.from('expenses').update({
         category: finalCategory,
         description,
-        amount: Number(amount.replace(/,/g, '')),
+        amount: Number(amount.replace(/[^0-9.]/g, '')),
+        currency,
         spent_on: spentOn,
       }).eq('id', editingId)
 
@@ -86,7 +90,8 @@ export default function ExpensesPage() {
       const { error: insertError } = await supabase.from('expenses').insert({
         category: finalCategory,
         description,
-        amount: Number(amount.replace(/,/g, '')),
+        amount: Number(amount.replace(/[^0-9.]/g, '')),
+        currency,
         spent_on: spentOn,
       })
 
@@ -114,6 +119,7 @@ export default function ExpensesPage() {
     }
     setDescription(expense.description)
     setAmount(expense.amount ? expense.amount.toLocaleString('en-US') : '')
+    setCurrency(expense.currency || 'IQD')
     setSpentOn(expense.spent_on)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
@@ -149,11 +155,13 @@ export default function ExpensesPage() {
       `--------`,
     ]
     expenses.forEach((e, i) => {
+      const formattedAmount = e.currency === 'USD' ? `$${e.amount.toLocaleString('en-US')}` : `${Math.round(e.amount).toLocaleString('en-IQ')} IQD`
       lines.push(`${i + 1}. ${e.description}`)
-      lines.push(`   Date: ${new Date(e.spent_on).toLocaleDateString()} | Category: ${e.category} | Amount: ${Math.round(e.amount).toLocaleString('en-IQ')} IQD`)
+      lines.push(`   Date: ${new Date(e.spent_on).toLocaleDateString()} | Category: ${e.category} | Amount: ${formattedAmount}`)
     })
     lines.push(``)
-    lines.push(`TOTAL: ${Math.round(total).toLocaleString('en-IQ')} IQD`)
+    lines.push(`TOTAL (IQD): ${Math.round(totalIQD).toLocaleString('en-IQ')} IQD`)
+    lines.push(`TOTAL (USD): $${totalUSD.toLocaleString('en-US')}`)
     return lines.join('\n')
   }
 
@@ -273,16 +281,33 @@ export default function ExpensesPage() {
 
           <div>
             <label className="text-gray-400 text-xs font-mono uppercase tracking-wider mb-2 block">Amount</label>
-            <input
-              type="text"
-              value={amount}
-              onChange={e => {
-                const val = e.target.value.replace(/[^0-9]/g, '')
-                setAmount(val ? Number(val).toLocaleString('en-US') : '')
-              }}
-              className="factory-input"
-              required
-            />
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={amount}
+                onChange={e => {
+                  const val = e.target.value.replace(/[^0-9.]/g, '')
+                  if (!val) { setAmount(''); return }
+                  const parts = val.split('.')
+                  let intPart = parts[0].replace(/,/g, '')
+                  intPart = intPart ? Number(intPart).toLocaleString('en-US') : ''
+                  const decPart = parts.length > 1 ? '.' + parts[1] : ''
+                  setAmount(intPart + decPart)
+                }}
+                className="factory-input flex-1"
+                style={{ width: '100%' }}
+                required
+              />
+              <select 
+                value={currency} 
+                onChange={e => setCurrency(e.target.value as 'IQD' | 'USD')} 
+                className="factory-input" 
+                style={{ width: '120px', flexShrink: 0 }}
+              >
+                <option value="IQD">IQD</option>
+                <option value="USD">USD</option>
+              </select>
+            </div>
           </div>
         </div>
 
@@ -308,11 +333,14 @@ export default function ExpensesPage() {
       </form>
 
       <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 print:bg-white print:border-gray-300">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-white font-semibold">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-2">
+          <h2 className="text-white font-semibold flex-1">
             {month ? new Date(`${month}-01`).toLocaleDateString(undefined, { month: 'long', year: 'numeric' }) : ''} Expenses
           </h2>
-          <p className="text-orange-400 font-mono text-sm">Total: {Math.round(total).toLocaleString('en-IQ')} IQD</p>
+          <div className="flex flex-wrap items-center gap-4 text-sm font-mono whitespace-nowrap">
+            <p className="text-orange-400">Total IQD: {Math.round(totalIQD).toLocaleString('en-IQ')}</p>
+            <p className="text-emerald-400">Total USD: ${totalUSD.toLocaleString('en-US')}</p>
+          </div>
         </div>
         {expenses.length === 0 ? (
           <p className="text-gray-500 font-mono text-sm">No expenses recorded for this month.</p>
@@ -327,7 +355,9 @@ export default function ExpensesPage() {
                   </p>
                 </div>
                 <div className="flex flex-col sm:items-end gap-2">
-                  <p className="text-rose-400 font-semibold">{Math.round(expense.amount).toLocaleString('en-IQ')} IQD</p>
+                  <p className="text-rose-400 font-semibold">
+                    {expense.currency === 'USD' ? '$' : ''}{expense.currency === 'IQD' ? Math.round(expense.amount).toLocaleString('en-IQ') : expense.amount.toLocaleString('en-US')}{expense.currency === 'IQD' ? ' IQD' : ''}
+                  </p>
                   <div className="flex items-center gap-3 mt-1 sm:mt-0">
                     <button onClick={() => handleEdit(expense)} className="text-blue-400 hover:text-blue-300 text-xs transition-colors">Edit</button>
                     <button onClick={() => handleDelete(expense.id)} className="text-red-400 hover:text-red-300 text-xs transition-colors">Delete</button>
@@ -355,14 +385,20 @@ export default function ExpensesPage() {
                   <td className="py-2 text-sm">{new Date(expense.spent_on).toLocaleDateString()}</td>
                   <td className="py-2 text-sm uppercase text-gray-600">{categoryKurdish[expense.category] || expense.category}</td>
                   <td className="py-2 text-sm">{expense.description}</td>
-                  <td className="py-2 text-sm font-semibold text-right">{Math.round(expense.amount).toLocaleString('en-IQ')}</td>
+                  <td className="py-2 text-sm font-semibold text-right">
+                    {expense.currency === 'USD' ? `$${expense.amount.toLocaleString('en-US')}` : `${Math.round(expense.amount).toLocaleString('en-IQ')} IQD`}
+                  </td>
                 </tr>
               ))}
             </tbody>
             <tfoot>
               <tr className="border-t-2 border-black">
-                <td colSpan={3} className="py-3 font-bold text-right text-lg">Total Expenses:</td>
-                <td className="py-3 font-bold text-right text-lg">{Math.round(total).toLocaleString('en-IQ')}</td>
+                <td colSpan={3} className="py-2 font-bold text-right text-lg">Total IQD:</td>
+                <td className="py-2 font-bold text-right text-lg">{Math.round(totalIQD).toLocaleString('en-IQ')} IQD</td>
+              </tr>
+              <tr className="border-b-2 border-black">
+                <td colSpan={3} className="py-2 font-bold text-right text-lg">Total USD:</td>
+                <td className="py-2 font-bold text-right text-lg">${totalUSD.toLocaleString('en-US')}</td>
               </tr>
             </tfoot>
           </table>
