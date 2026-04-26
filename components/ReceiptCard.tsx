@@ -28,10 +28,11 @@ export default function ReceiptCard({
 }: ReceiptCardProps) {
   const { t } = useLanguage()
 
-  const localizedStatusLabels = {
+  const localizedStatusLabels: Record<ReceiptStatus, string> = {
     pending: t('receipt.status.pending'),
     approved: t('receipt.status.approved'),
     rejected: t('receipt.status.rejected'),
+    deleted: 'Deleted',
   }
 
   return (
