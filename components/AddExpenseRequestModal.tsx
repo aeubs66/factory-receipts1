@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useLanguage } from '@/components/LanguageProvider'
+import { Receipt } from '@/types'
 
 interface AddExpenseRequestModalProps {
   initialData?: Receipt | null
