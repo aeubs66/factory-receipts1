@@ -18,6 +18,7 @@ const translations: Record<Language, Record<string, string>> = {
     'sidebar.dashboard': 'Dashboard',
     'sidebar.newReceipt': 'New Receipt',
     'sidebar.myReceipts': 'My Receipts',
+    'sidebar.myExpenses': 'My Expenses',
     'sidebar.userAccounts': 'User Accounts',
     'sidebar.workers': 'Workers',
     'sidebar.pending': 'Pending',
@@ -69,6 +70,17 @@ const translations: Record<Language, Record<string, string>> = {
     'manager.rejectModal.placeholder': 'Explain briefly why this receipt is rejected...',
     'manager.rejectModal.cancel': 'Cancel',
     'manager.rejectModal.confirm': 'Reject receipt',
+    'manager.expense.title': 'Request Expense',
+    'manager.expense.subtitle': 'Submit a simple expense to the admin',
+    'manager.expense.name': 'Expense Name',
+    'manager.expense.namePlaceholder': 'What is this expense for?',
+    'manager.expense.amount': 'Amount',
+    'manager.expense.currency': 'Currency',
+    'manager.expense.note': 'Note (Optional)',
+    'manager.expense.notePlaceholder': 'Any additional details...',
+    'manager.expense.cancel': 'Cancel',
+    'manager.expense.submit': 'Submit Request',
+    'manager.expense.submitting': 'Submitting...',
     'receipt.status.pending': 'Pending',
     'receipt.status.approved': 'Approved',
     'receipt.status.rejected': 'Rejected',
@@ -106,6 +118,7 @@ const translations: Record<Language, Record<string, string>> = {
     'sidebar.dashboard': 'داشبۆرد',
     'sidebar.newReceipt': 'وەسڵی نوێ',
     'sidebar.myReceipts': 'وەسڵەکانم',
+    'sidebar.myExpenses': 'خەرجییەکانم',
     'sidebar.userAccounts': 'ھەژماری بەکارهێنەر',
     'sidebar.workers': 'کرێکاران',
     'sidebar.pending': 'لە چاوەڕوانیدا',
@@ -157,6 +170,17 @@ const translations: Record<Language, Record<string, string>> = {
     'manager.rejectModal.placeholder': 'کورتە بنووسە بۆچی ئەم وەسڵە رەتکراوە...',
     'manager.rejectModal.cancel': 'پاشگەزبوونەوە',
     'manager.rejectModal.confirm': 'وەسڵەکە رەت بکە',
+    'manager.expense.title': 'داواکردنی خەرجی',
+    'manager.expense.subtitle': 'ناردنی خەرجییەکی سادە بۆ بەڕێوەبەر',
+    'manager.expense.name': 'ناوی خەرجی',
+    'manager.expense.namePlaceholder': 'ئەم خەرجییە بۆ چییە؟',
+    'manager.expense.amount': 'بڕی پارە',
+    'manager.expense.currency': 'جۆری دراو',
+    'manager.expense.note': 'تێبینی (ئارەزوومەند)',
+    'manager.expense.notePlaceholder': 'هەر زانیارییەکی زیاتر...',
+    'manager.expense.cancel': 'پاشگەزبوونەوە',
+    'manager.expense.submit': 'ناردنی داواکاری',
+    'manager.expense.submitting': 'لە ناردندایە...',
     'receipt.status.pending': 'چاوەڕوان',
     'receipt.status.approved': 'قبوڵکراو',
     'receipt.status.rejected': 'رەدکراو',
@@ -224,12 +248,12 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
         }
       }
     }
-    
+
     initAuth()
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (typeof window === 'undefined') return
-      
+
       if (event === 'SIGNED_IN' && session) {
         const stored = window.localStorage.getItem(`appLanguage_${session.user.id}`)
         if (stored === 'en' || stored === 'ku') {

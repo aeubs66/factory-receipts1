@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Receipt } from '@/types'
 import { supabase } from '@/lib/supabase'
 import { useLanguage } from '@/components/LanguageProvider'
+import ConfirmDeleteModal from '@/components/ConfirmDeleteModal'
 
 interface ReceiptModalProps {
   receipt: Receipt
@@ -17,6 +18,7 @@ export default function ReceiptModal({ receipt, isManager, onClose, onUpdate }: 
   const [countAsExpense, setCountAsExpense] = useState(receipt.add_as_expense || false)
   const [loading, setLoading] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [editForm, setEditForm] = useState({
     worker_name: receipt.worker_name,
     worker_id: receipt.worker_id,
@@ -39,6 +41,7 @@ export default function ReceiptModal({ receipt, isManager, onClose, onUpdate }: 
           category: receipt.expense_category || 'operations',
           description: `Receipt: ${receipt.item_description} (${receipt.worker_name})`,
           amount: Number(receipt.amount),
+          currency: receipt.currency || 'IQD',
           spent_on: receipt.purchase_date.split('T')[0],
         })
       }
@@ -49,7 +52,6 @@ export default function ReceiptModal({ receipt, isManager, onClose, onUpdate }: 
   }
 
   const handleDelete = async () => {
-    if (!confirm('Are you sure you want to permanently delete this receipt? This action cannot be undone.')) return
     setLoading(true)
     const { error } = await supabase.from('receipts').delete().eq('id', receipt.id)
     if (!error) {
@@ -57,8 +59,9 @@ export default function ReceiptModal({ receipt, isManager, onClose, onUpdate }: 
       onClose()
     } else {
       alert(`Could not delete receipt: ${error.message}`)
+      setShowDeleteModal(false)
+      setLoading(false)
     }
-    setLoading(false)
   }
 
   const handleSaveEdit = async () => {
@@ -105,7 +108,7 @@ export default function ReceiptModal({ receipt, isManager, onClose, onUpdate }: 
               </svg>
             </button>
             <button
-              onClick={handleDelete}
+              onClick={() => setShowDeleteModal(true)}
               disabled={loading}
               className="text-red-500 hover:text-red-400 transition-colors disabled:opacity-50"
               title="Delete Receipt"
@@ -251,6 +254,16 @@ export default function ReceiptModal({ receipt, isManager, onClose, onUpdate }: 
           )}
         </div>
       </div>
+
+      {showDeleteModal && (
+        <ConfirmDeleteModal
+          title="Delete Receipt"
+          message="Are you sure you want to permanently delete this receipt? This action cannot be undone."
+          isDeleting={loading}
+          onConfirm={handleDelete}
+          onCancel={() => setShowDeleteModal(false)}
+        />
+      )}
     </div>
   )
 }

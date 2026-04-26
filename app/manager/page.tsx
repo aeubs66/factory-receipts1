@@ -21,6 +21,7 @@ export default function ManagerDashboard() {
     const { data } = await supabase
       .from('receipts')
       .select('*')
+      .neq('worker_id', 'expense_request')
       .order('created_at', { ascending: false })
 
     if (data) {

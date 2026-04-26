@@ -22,6 +22,7 @@ const adminLinks = [
 
 const managerLinks = [
   { href: '/manager', label: 'Dashboard', icon: <GridIcon /> },
+  { href: '/manager/my-expenses', label: 'My Expenses', icon: <ExpenseIcon /> },
   { href: '/manager/pending', label: 'Pending', icon: <ClockIcon /> },
   { href: '/manager/all', label: 'All Receipts', icon: <ListIcon /> },
 ]
@@ -67,6 +68,7 @@ export default function Sidebar({ role, userName }: SidebarProps) {
       if (link.href === '/admin/workers') return { ...link, label: t('sidebar.workers') }
     } else {
       if (link.href === '/manager') return { ...link, label: t('sidebar.dashboard') }
+      if (link.href === '/manager/my-expenses') return { ...link, label: t('sidebar.myExpenses') }
       if (link.href === '/manager/pending') return { ...link, label: t('sidebar.pending') }
       if (link.href === '/manager/all') return { ...link, label: t('sidebar.allReceipts') }
     }

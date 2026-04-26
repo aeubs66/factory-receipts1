@@ -1,4 +1,4 @@
-export type ReceiptStatus = 'pending' | 'approved' | 'rejected'
+export type ReceiptStatus = 'pending' | 'approved' | 'rejected' | 'deleted'
 
 export interface Receipt {
   id: string
@@ -15,6 +15,7 @@ export interface Receipt {
   submitted_by: string // admin user id
   add_as_expense?: boolean
   expense_category?: string
+  currency?: string
 }
 
 export interface User {

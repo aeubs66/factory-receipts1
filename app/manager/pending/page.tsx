@@ -16,7 +16,8 @@ export default function ManagerPendingPage() {
       .from('receipts')
       .select('*')
       .eq('status', 'pending')
-      .order('created_at', { ascending: true }) // oldest first
+      .neq('worker_id', 'expense_request')
+      .order('created_at', { ascending: true })
 
     if (data) setReceipts(data as Receipt[])
     setLoading(false)

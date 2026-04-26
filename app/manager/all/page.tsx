@@ -13,7 +13,7 @@ export default function ManagerAllPage() {
   const [selected, setSelected] = useState<Receipt | null>(null)
 
   const fetchReceipts = async () => {
-    let query = supabase.from('receipts').select('*').order('created_at', { ascending: false })
+    let query = supabase.from('receipts').select('*').neq('worker_id', 'expense_request').order('created_at', { ascending: false })
     if (filter !== 'all') query = query.eq('status', filter)
     const { data } = await query
     if (data) setReceipts(data as Receipt[])

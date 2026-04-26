@@ -35,6 +35,9 @@ h1, h2, h3, h4 {
 .status-rejected {
   @apply bg-red-900/30 text-red-400 border border-red-800/50;
 }
+.status-deleted {
+  @apply bg-gray-800/50 text-gray-400 border border-gray-700/50;
+}
 
 .receipt-card {
   background: linear-gradient(135deg, #111827 0%, #0f172a 100%);

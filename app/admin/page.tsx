@@ -58,7 +58,7 @@ export default function AdminDashboard() {
 
   const handleApprove = async (id: string) => {
     setActionLoadingId(id)
-    const { data: receipt } = await supabase.from('receipts').select('add_as_expense, expense_category, item_description, worker_name, amount, purchase_date').eq('id', id).single()
+    const { data: receipt } = await supabase.from('receipts').select('add_as_expense, expense_category, item_description, worker_name, amount, purchase_date, currency').eq('id', id).single()
     const { error } = await supabase
       .from('receipts')
       .update({ status: 'approved' })
@@ -69,6 +69,7 @@ export default function AdminDashboard() {
         category: receipt.expense_category || 'operations',
         description: `Receipt: ${receipt.item_description} (${receipt.worker_name})`,
         amount: Number(receipt.amount),
+        currency: receipt.currency || 'IQD',
         spent_on: receipt.purchase_date.split('T')[0],
       })
     }
