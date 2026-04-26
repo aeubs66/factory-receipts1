@@ -1,6 +1,6 @@
 'use client'
 
-import { Receipt } from '@/types'
+import { Receipt, ReceiptStatus } from '@/types'
 import { useLanguage } from '@/components/LanguageProvider'
 
 interface ReceiptCardProps {
